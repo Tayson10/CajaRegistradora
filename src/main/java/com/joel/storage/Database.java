@@ -11,109 +11,114 @@ import java.util.List;
 public class Database {
 
     private Product[] products;
-    private List<Product> purchases;
     private List<Product> sales;
-
+    private List<Product> purchases;
 
     public Database() {
         products = new Product[3];
-        Product potato = new Potato("Amarilla");
-        Product rice = new Rice("Costeño");
+        Product potato = new Potato("Sabanera");
+        Product rice = new Rice("Calidad");
         Product meat = new Meat("Lomo fino");
 
         products[0] = potato;
         products[1] = rice;
         products[2] = meat;
 
-        purchases = new ArrayList<>();
         sales = new ArrayList<>();
+        purchases = new ArrayList<>();
     }
 
-    public Product getByIndex(int index) {
-        if (index < 0 || index >= products.length) {
-            System.out.println("Indice no válido");
+    private boolean isValidID(int id) {
+        return id >= 0 && id <= 2;
+    }
+
+    // Obtiene el producto por el ID
+    public Product getByID(int id) {
+        if (!isValidID(id)) {
+            System.out.println("Ese item no existe");
             return null;
         }
 
-        Product result = null;
+        Product r = null;
         try {
-            result = products[index].clone();
-        } catch (
-                CloneNotSupportedException e) {
-            System.out.println(e.getMessage());
+            r = products[id].clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
         }
-        return result;
+        return r;
     }
 
+    // Devuelve todos los productos
     public Product[] getProducts() {
-        Product[] result = new Product[3];
+        Product[] list = new Product[3];
         try {
-            result[0] = products[0].clone();
-            result[1] = products[1].clone();
-            result[2] = products[2].clone();
-        } catch (
-                CloneNotSupportedException e) {
-            System.out.println(e.getMessage());
-        }
-        return products;
+            list[0] = products[0].clone();
+            list[1] = products[1].clone();
+            list[2] = products[2].clone();
+        } catch (CloneNotSupportedException ignored) {}
+
+        return list;
     }
 
-    public void buy(Product product) {
-        Product temp;
-
-        switch (product.getClass().getSimpleName()) {
+    public void buyProduct(Product p) {
+        Product oldProduct;
+        switch (p.getClass().getSimpleName()) {
             case "Potato":
-                temp = products[0];
+                oldProduct = products[0];
                 break;
             case "Rice":
-                temp = products[1];
+                oldProduct = products[1];
                 break;
             case "Meat":
-                temp = products[2];
+                oldProduct = products[2];
                 break;
             default:
-                System.out.println("No válido");
+                System.out.println("El producto no es válido");
                 return;
         }
 
-        temp.setAmount(temp.getAmount() + product.getAmount());
-        temp.setPrice(product.getPrice());
-        purchases.add(product);
+        oldProduct.setAmount(oldProduct.getAmount() + p.getAmount());
+        oldProduct.setPrice(p.getPrice());
     }
 
-    public void sale(Product product) {
-        Product temp;
-
-        switch (product.getClass().getSimpleName()) {
+    public void saleProduct(Product p, int amount) {
+        Product oldProduct;
+        switch (p.getClass().getSimpleName()) {
             case "Potato":
-                temp = products[0];
+                oldProduct = products[0];
                 break;
             case "Rice":
-                temp = products[1];
+                oldProduct = products[1];
                 break;
             case "Meat":
-                temp = products[2];
+                oldProduct = products[2];
                 break;
             default:
-                System.out.println("No válido");
+                System.out.println("El producto no es válido");
                 return;
         }
 
-        temp.setAmount(temp.getAmount() - product.getAmount());
-        product.setPrice(temp.getPrice() * 1.25);
-        sales.add(product);
+        oldProduct.setAmount(oldProduct.getAmount() - amount);
     }
 
-    public List<Product> getPurchases() {
-        return purchases;
+    // Agrega ventas
+    public void addSale(Product p) {
+        sales.add(p);
     }
 
+    // Devuelve todos los productos vendidos
     public List<Product> getSales() {
         return sales;
     }
 
+    // Agrega compras
+    public void addPurchase(Product p) {
+        purchases.add(p);
+    }
 
-
-
+    // Devuelve todos los productos comprados
+    public List<Product> getPurchases() {
+        return purchases;
+    }
 
 }
